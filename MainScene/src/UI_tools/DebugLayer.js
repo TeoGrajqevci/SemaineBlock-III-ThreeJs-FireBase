@@ -119,7 +119,7 @@ export default class DebugLayer {
     });
     this.reopenButton.textContent = "Show Debug";
     this.reopenButton.onclick = () => this.show();
-    document.body.appendChild(this.reopenButton);
+    // document.body.appendChild(this.reopenButton);
 
     // Conteneur pour les messages
     this.messagesContainer = document.createElement("div");

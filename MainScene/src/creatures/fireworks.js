@@ -21,6 +21,7 @@ export default class Fireworks {
     this.ACTION_SELECT = 1;
     this.ACTION_NONE = 0;
     this.action = this.ACTION_NONE;
+    this.keepSpawning = false;
     this.animationDone = true;
     this.particlesPerExplosion = 200;
     this.mouse = new THREE.Vector2();

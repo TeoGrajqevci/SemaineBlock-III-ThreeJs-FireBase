@@ -17,6 +17,7 @@ import InputManager from "./components/input/InputManager.js";
 import EdgeGlowMaterial from "./holographicMat.js";
 
 import Eggs from "./eggs.js";
+import { set } from "firebase/database";
 
 export default class MainScene {
   constructor() {
@@ -113,6 +114,10 @@ export default class MainScene {
     // --------------------------------------------------------------
     if (key == "orange" && entry.position == "down") {
       this.molusk.spawnAnim();
+      this.eggs.triggerAnimationForEggIn("pink_egg");
+      setTimeout(() => {
+        this.eggs.triggerAnimationForEggOut("pink_egg");
+      }, 18000);
     }
     // --------------------------------------------------------------
     if (key == "blue" && entry.position == "down") {

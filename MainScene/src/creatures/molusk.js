@@ -28,7 +28,7 @@ export default class Molusk {
   loadFBX() {
     const loader = new FBXLoader();
     loader.load(
-      "models/MOLUSK_1.fbx",
+      "models/MOLUSK_2.fbx",
       (object) => {
         // object.position.set(3, 0.5, -6.6);
         // object.rotation.set(0, 10, 0);
@@ -68,9 +68,21 @@ export default class Molusk {
 
         // Animated FBX
         this.mesh.animations = object.animations;
+        console.log(this.mesh.animations);
         this.mixer = new THREE.AnimationMixer(this.mesh);
-        this.animation = this.mixer.clipAction(this.mesh.animations[0]);
-        this.animation.setLoop(THREE.LoopOnce);
+
+        // for each mesh.animations, create a new animation and set it to loop once
+        this.animation = [];
+        for (let i = 0; i < this.mesh.animations.length; i++) {
+          let anim = this.mixer.clipAction(this.mesh.animations[i]);
+          this.animation.push(anim);
+          anim.setLoop(THREE.LoopOnce);
+        }
+
+        // this.animation = this.mixer.clipAction(this.mesh.animations[0]);
+        // this.animation = this.mixer.clipAction(this.mesh.animations[1]);
+        // this.animation = this.mixer.clipAction(this.mesh.animations[2]);
+        // this.animation.setLoop(THREE.LoopOnce);
       },
       (xhr) => {
         console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -106,11 +118,29 @@ export default class Molusk {
   spawnAnim() {
     // stop animation if it exists
     if (this.anim) this.anim.kill();
-    this.mesh.position.set(0, 0, 0);
-    this.mixer.clipAction(this.mesh.animations[0]).play();
-    // once animation done play idle animation
-    this.mixer.addEventListener("finished", () => {
-      this.idleAnim();
+
+    // position 0
+    gsap.to(this.mesh.position, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 0.3,
+      ease: "sine.inOut",
+      onComplete: () => {
+        for (let i = 0; i < this.animation.length; i++) {
+          // restart animations
+          this.animation[i].reset();
+          this.mixer.clipAction(this.mesh.animations[i]).play();
+        }
+
+        console.log("animation started");
+
+        setTimeout(() => {
+          this.mixer.addEventListener("finished", () => {
+            this.idleAnim();
+          });
+        }, 500);
+      },
     });
   }
 
@@ -126,13 +156,14 @@ export default class Molusk {
     this.anim = gsap.fromTo(
       this.mesh.position,
       {
-        y: 1.2,
-        x: 0.1,
-        z: -0.8,
+        y: 0,
+        x: 0,
+        z: 0,
       },
       {
-        y: 1.5,
+        y: 0.3,
         duration: 2,
+        delay: 0,
         yoyo: true,
         repeat: -1,
         ease: "sine.inOut",
